@@ -7,7 +7,10 @@ import com.chingkwok.entity.Table;
 import com.google.common.base.CaseFormat;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class DatabaseUtil {
@@ -88,6 +91,29 @@ public class DatabaseUtil {
 
     }
 
+    //TODO
+    public static List<String> getPrimaryKey(String url, String username, String password,String table){
+        try(
+                Connection conn = DriverManager.getConnection(url, username, password)
+                ){
+            String sql = "SHOW CREATE TABLE " + table;
+            PreparedStatement statement = conn.prepareStatement(sql);
+            ResultSet rs = statement.executeQuery();
+            Pattern pattern = Pattern.compile("PRIMARY KEY \\(\\`(.*)\\`\\)");
+            Matcher matcher =pattern.matcher(rs.getString(2));
+            matcher.find();
+            String data=matcher.group();
+            //过滤对于字符
+            data=data.replaceAll("\\`|PRIMARY KEY \\(|\\)", "");
+            //拆分字符
+            String [] stringArr= data.split(",");
+            return Arrays.asList(stringArr);
+        }catch (SQLException e){
+            e.printStackTrace();
+            return new ArrayList<String>();
+        }
+    }
+
     /**
      * 获取所有表
      *
@@ -102,6 +128,7 @@ public class DatabaseUtil {
                 ArrayList<Column> columns = new ArrayList<>();
                 table.setTableName(v);
                 List<String> columnComments = getColumnComments(url,username,password,v);
+                List<String> primaryKey = getPrimaryKey(url, username, password, v);
                 String tableSql = SQL + v;
                 try {
                     PreparedStatement pStemt = conn.prepareStatement(tableSql);

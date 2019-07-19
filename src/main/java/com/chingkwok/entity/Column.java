@@ -12,4 +12,5 @@ public class Column {
     private int typeCode;
     private String comment;
     private String property;
+    private boolean isPrimary;
 }
