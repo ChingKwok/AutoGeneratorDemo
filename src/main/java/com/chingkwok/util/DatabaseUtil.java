@@ -100,7 +100,10 @@ public class DatabaseUtil {
             PreparedStatement statement = conn.prepareStatement(sql);
             ResultSet rs = statement.executeQuery();
             Pattern pattern = Pattern.compile("PRIMARY KEY \\(\\`(.*)\\`\\)");
-            Matcher matcher =pattern.matcher(rs.getString(2));
+            Matcher matcher = null;
+            while (rs.next()){
+                matcher =pattern.matcher(rs.getString(2));
+            }
             matcher.find();
             String data=matcher.group();
             //过滤对于字符
@@ -109,6 +112,9 @@ public class DatabaseUtil {
             String [] stringArr= data.split(",");
             return Arrays.asList(stringArr);
         }catch (SQLException e){
+            e.printStackTrace();
+            return new ArrayList<String>();
+        }catch (Exception e){
             e.printStackTrace();
             return new ArrayList<String>();
         }
@@ -134,11 +140,12 @@ public class DatabaseUtil {
                     PreparedStatement pStemt = conn.prepareStatement(tableSql);
                     ResultSetMetaData metaData = pStemt.getMetaData();
                     DatabaseMetaData databaseMetaData = conn.getMetaData();
-                    ResultSet primaryKeys = databaseMetaData.getPrimaryKeys(null, null, v);
-//                    System.out.println(primaryKeys.getObject());
                     int count = metaData.getColumnCount();
                     for (int i = 0; i < count; i++) {
                         Column column = new Column();
+                        if(primaryKey.contains(metaData.getColumnName(i + 1))){
+                            column.setPrimary(Boolean.TRUE);
+                        }
                         column.setName(metaData.getColumnName(i + 1));
                         column.setTypeName(metaData.getColumnTypeName(i + 1));
                         column.setTypeCode(metaData.getColumnType(i + 1));

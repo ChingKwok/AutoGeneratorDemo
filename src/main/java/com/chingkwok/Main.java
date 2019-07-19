@@ -28,6 +28,8 @@ public class Main {
         String username = "root";
         String password = "a602b854-8218-4857-b22c-f733bcd52671";
         // 获取表结构
+        List<String> user = DatabaseUtil.getPrimaryKey(url, username, password, "user");
+
         List<Table> allTable = DatabaseUtil.getAllTable(url, username, password);
         // 获取project信息
         Project project = new Project();
