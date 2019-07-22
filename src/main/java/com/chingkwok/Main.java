@@ -4,11 +4,13 @@ import com.alibaba.druid.pool.DruidDataSource;
 import com.chingkwok.entity.Project;
 import com.chingkwok.entity.Table;
 import com.chingkwok.util.DatabaseUtil;
+import com.chingkwok.util.FileUtils;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 
 import java.io.*;
 import java.sql.Connection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +21,7 @@ import java.util.Map;
 public class Main {
     private static final String TEMPLATE_PATH = "src/main/java/com/chingkwok/templates";
     private static final String CLASS_PATH = "src/main/java/com/chingkwok/targetFile";
+    private static final String SEPARATOR = System.getProperty("file.separator");
 
     public static void main(String[] args) {
         // step1 创建freeMarker配置实例
@@ -36,7 +39,7 @@ public class Main {
         project.setPackageName("com.chingkwok");
         project.setProjectCode("autogenerator");
         for (Table t : allTable
-                ) {
+        ) {
             try {
                 // step2 获取模版路径
                 configuration.setDirectoryForTemplateLoading(new File(TEMPLATE_PATH));
@@ -47,7 +50,20 @@ public class Main {
                 // step4 加载模版文件
                 Template template = configuration.getTemplate("mapper.ftl");
                 // step5 生成数据
-                File docFile = new File(CLASS_PATH + "\\" + "Mapper.xml");
+                String projectPath = System.getProperty("user.dir");
+                File file = new File(projectPath + SEPARATOR + "targetFile");
+                FileUtils.deleteFile(file);
+                if (!file.exists()) {
+                    file.mkdir();
+                }
+                String time = String.valueOf(new Date().getTime());
+                File file1 = new File(projectPath + SEPARATOR + "targetFile" + SEPARATOR + time);
+                if (file1.exists()) {
+                    FileUtils.deleteFile(file1);
+                }
+                file1.mkdir();
+
+                File docFile = new File(file1.getCanonicalPath() + SEPARATOR + "Mapper.xml");
                 out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(docFile)));
                 // step6 输出文件
                 template.process(dataMap, out);

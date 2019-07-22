@@ -11,6 +11,7 @@ import java.util.Map;
 @Data
 public class Table {
     private String tableName;
+    private String alias;
     private List<Column> columns;
     private String tableComment;
 }
