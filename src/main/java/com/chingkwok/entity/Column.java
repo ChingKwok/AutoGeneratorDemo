@@ -13,4 +13,5 @@ public class Column {
     private String comment;
     private String property;
     private Boolean isPrimary;
+    private String javaType;
 }

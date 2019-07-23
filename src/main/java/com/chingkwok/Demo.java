@@ -2,12 +2,13 @@ package com.chingkwok;
 
 
 import com.chingkwok.util.DatabaseUtil;
+import com.chingkwok.util.SqlToJavaType;
 
 public class Demo {
 
 
     public static void main(String[] args) {
-        String project = DatabaseUtil.getAlias("erp_Project_test");
-        System.out.println(project);
+        String s = SqlToJavaType.sqlTojavaHandle(-1);
+        System.out.println(s);
     }
 }

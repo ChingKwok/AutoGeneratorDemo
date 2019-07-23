@@ -14,4 +14,5 @@ public class Table {
     private String alias;
     private List<Column> columns;
     private String tableComment;
+    private String entityName;
 }
